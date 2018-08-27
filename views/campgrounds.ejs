@@ -1,0 +1,34 @@
+<% include partials/header %>
+
+
+
+<div class = "container">
+    <header class = "jumbotron">
+        <!--use another container to wrap part together, when you minimize the window, text part leave space between outer window-->
+        <div class = "container">
+            <h1>Welcom to YelpCamp!</h1>
+            <p></p>
+            <p>
+                <a class = "btn btn-primary btn-lg" href = "/campgrounds/new">Add New Campground</a>
+            </p>
+        </div>
+    </header>
+
+    <!--Use rows to create horizontal groups of columns-->
+    <div class = "row text-center" style = "display: flex; flex-wrap: wrap;">
+        <% campgrounds.forEach(function(campground){ %>
+            <div class = "col-md-4 col-sm-6">
+                <!--give an image a rounded 1px border appearance, use div to add button,text..to the thumbnail-->
+                <div class = "thumbnail">
+                    <!--style : Defines the width in percent of the containing block-->
+                    <img src = "<%= campground.image %>" style="width:100%">
+                    <div class = "caption">
+                        <h4><%= campground.name %></h4>
+                    </div>
+                </div>
+            </div>
+        <% }); %>
+    </div>
+</div>
+
+<% include partials/footer %>
