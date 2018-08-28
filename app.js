@@ -1,34 +1,15 @@
-var express = require("express");
-var app = express();
-var bodyParser = require("body-parser");
-var mongoose = require("mongoose");
+var express      = require("express"),
+     app          = express(),
+     bodyParser  = require("body-parser"),
+     mongoose     = require("mongoose"),
+     Campground   = require("./models/campground"),
+    seedDB         = require("./seeds");
 
 //dabase name YelpCamp cannot contain any space in the end
 mongoose.connect("mongodb://localhost:27017/YelpCamp", {useNewUrlParser: true});
 app.use(bodyParser.urlencoded({extended: true}));
 app.set('view engine', 'ejs');
-
-var campgroundSchema = new mongoose.Schema({
-   name : String,
-   image: String,
-   description: String
-});
-
-var Campground = mongoose.model("Campground", campgroundSchema);
-
-Campground.create(
-    {
-        name : "Rukiya Safari",
-        image: "https://media-cdn.tripadvisor.com/media/photo-s/0f/14/ee/89/rukiya-safari-camp-in.jpg",
-        description: "This is Safari"
-    }, function(err, campground){
-        if (err) {
-            console.log(err);
-        } else {
-            console.log("Newly Created Campground: ");
-            console.log(campground);
-        }
-    });
+seedDB();
 
 app.get("/", function(req, res){
   res.render('main');
@@ -45,6 +26,7 @@ app.get("/campgrounds", function(req, res){
     });
 });
 
+//create - add new campground to DB
 app.post("/campgrounds", function(req, res){
     var name = req.body.name;
     var img = req.body.image;
@@ -68,15 +50,16 @@ app.get("/campgrounds/new", function(req, res){
 
 app.get("/campgrounds/:id", function(req, res){
     //find the campground with provided id
-    Campground.findById(req.params.id, function (err, foundCampground) {
+    Campground.findById(req.params.id).populate("comments").exec(function (err, foundCampground) {
         if (err) {
             console.log(err);
         } else {
+            console.log(foundCampground);
             res.render("show", {campground: foundCampground});
         }
     });
 });
 
-app.listen(3000, function(req, res){
+app.listen(3000, function(){
   console.log("Yelp Camp start");
 });
